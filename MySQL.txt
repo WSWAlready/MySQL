@@ -1,0 +1,15 @@
+DQL：
+查询一个字段
+  slect 字段名 from 表名；
+	select和from是关键字
+	字段名和表名是标识符；
+
+查询两个字段，或者多个字段
+  select 字段名，使用逗号隔开，from 表明
+
+查询所有字段
+   第一种select a,b,c,d,e....from 表名；
+   第二种select * from 表名；（效率低，可读性差）；
+
+查询的列起别名
+   select 表明，列名 as 别名 from 表名；（不会修改操作）
