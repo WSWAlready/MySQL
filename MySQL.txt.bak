@@ -1,0 +1,130 @@
+DQL：
+查询一个字段
+  slect 字段名 from 表名；
+	select和from是关键字
+	字段名和表名是标识符；
+
+查询两个字段，或者多个字段
+  select 字段名，使用逗号隔开，from 表明
+
+查询所有字段
+   第一种select a,b,c,d,e....from 表名；
+   第二种select * from 表名；（效率低，可读性差）；
+
+查询的列起别名
+   select 表明，列名 as 别名 from 表名；（不会修改操作）
+   as可以省略
+	在所有数据库中，字符串同意使用单引号括起来，单引号是标准，双引号在oracle数据库在用不了，但是MySQL可以使用；
+
+字段可以加减乘除运算
+
+
+条件查询
+
+   不是查询将所有数据都查出来，是查询出符合条件的
+   语法格式：
+   	select
+	  字段1，字段2
+	from
+	   表名
+  	where
+	   条件；
+   条件： = 等于   <> = 大于小于等于    between ....and....两个值之间，闭区间       >=  and <= 和between一样        is null 为空，is not null不为空
+	  and 并且  or  或者    in  包含   not  not 可以取非   %匹配任意个字符
+		在数据库中null不能使用“=”衡量，需要使用is；
+		and 和 or同时出现会出现优先级的问题，and的优先级比or要高，使用的时候加括号。
+		in使用的时候是where 数据名称 in（采用逗号隔开）；in使用的时候不是表示一个区间，是具体的值；
+	   like称为模糊查询，支持%或下划线匹配，%匹配任意多个字符，下划线任意一个字符；
+		例如找到名字里面含有“O”的，select ename from emp where ename like '%O%';%字符%是在名字之间，字符%是以字符开始的，
+		%字符是以该字符结尾的，_字符%，是字符在第二位的；_ _字符是第二位为该字符的。
+		如果寻找的名称里面有下划线的，需要加 \ 转义字符，‘%\_%’
+
+
+排序
+	select 名称 from emp order by sal;(默认是升序)；
+	select 名称 from emp order by sal desc;(指定降序）
+	select 名称 from emp order by sal asc;(指定升序）
+ 	
+	如果一个变量是一致的，使用另一个变量升序：select ename ,sal from emp order by sal asc, ename asc;先使用sal排序，如果sal一致在使用ename排序
+	
+
+	语句的执行数据：from where select order by;(排序总在最后执行）；
+
+
+
+
+
+数据处理函数（单行处理函数）
+	
+	一个输入对应一个输出，和单行相对的是多行处理函数（多个输入对应一个输出）；
+	常见的单行处理函数：Lower  转换小写
+			    upper  转换大写
+			    substr 取子串（substr （被截取的字符串，起始下标（起始下标从1开始），截取长度））
+				    找出员工的第一个名字是A的员工信息
+mysql> select ename from emp where ename like 'A%';
++-------+
+| ename |
++-------+
+| ALLEN |
+| ADAMS |
++-------+
+2 rows in set (0.00 sec)
+
+mysql> select ename from emp where substr(ename,1,1) = 'A';
++-------+
+| ename |
++-------+
+| ALLEN |
+| ADAMS |
++-------+
+使员工名字首字母大写，使用concat拼接
+mysql> select concat (upper(substr(ename,1,1)),lower(substr(ename,2,length(ename))))from emp;
++------------------------------------------------------------------------+
+| concat (upper(substr(ename,1,1)),lower(substr(ename,2,length(ename)))) |
++------------------------------------------------------------------------+
+| Smith                                                                  |
+| Allen                                                                  |
+| Ward                                                                   |
+| Jones                                                                  |
+| Martin                                                                 |
+| Blake                                                                  |
+| Clark                                                                  |
+| Scott                                                                  |
+| King                                                                   |
+| Turner                                                                 |
+| Adams                                                                  |
+| James                                                                  |
+| Ford                                                                   |
+| Miller                                                                 |
++------------------------------------------------------------------------+
+14 rows in set (0.00 sec)
+
+			    length 取长度
+			    trim   去空格
+			    str_to_date  将字符串转换为日期
+			    date_format  格式化日期
+			    format 设置千分位
+	 		    round  四舍五入
+			    rand() 生成随机数
+			    ifnull 可以将null转换为一个具体值
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
