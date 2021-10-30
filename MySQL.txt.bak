@@ -31,7 +31,7 @@ DQL：
 	   条件；
    条件： = 等于   <> = 大于小于等于    between ....and....两个值之间，闭区间       >=  and <= 和between一样        is null 为空，is not null不为空
 	  and 并且  or  或者    in  包含   not  not 可以取非   %匹配任意个字符
-		在数据库中null不能使用“=”衡量，需要使用is；
+		在数据库中null不能使用 “=” 衡量，需要使用is；
 		and 和 or同时出现会出现优先级的问题，and的优先级比or要高，使用的时候加括号。
 		in使用的时候是where 数据名称 in（采用逗号隔开）；in使用的时候不是表示一个区间，是具体的值；
 	   like称为模糊查询，支持%或下划线匹配，%匹配任意多个字符，下划线任意一个字符；
@@ -61,54 +61,135 @@ DQL：
 			    upper  转换大写
 			    substr 取子串（substr （被截取的字符串，起始下标（起始下标从1开始），截取长度））
 				    找出员工的第一个名字是A的员工信息
-mysql> select ename from emp where ename like 'A%';
-+-------+
-| ename |
-+-------+
-| ALLEN |
-| ADAMS |
-+-------+
-2 rows in set (0.00 sec)
+					mysql> select ename from emp where ename like 'A%';
+					+-------+
+					| ename |
+					+-------+
+					| ALLEN |
+					| ADAMS |
+					+-------+
+					2 rows in set (0.00 sec)
 
-mysql> select ename from emp where substr(ename,1,1) = 'A';
-+-------+
-| ename |
-+-------+
-| ALLEN |
-| ADAMS |
-+-------+
-使员工名字首字母大写，使用concat拼接
-mysql> select concat (upper(substr(ename,1,1)),lower(substr(ename,2,length(ename))))from emp;
-+------------------------------------------------------------------------+
-| concat (upper(substr(ename,1,1)),lower(substr(ename,2,length(ename)))) |
-+------------------------------------------------------------------------+
-| Smith                                                                  |
-| Allen                                                                  |
-| Ward                                                                   |
-| Jones                                                                  |
-| Martin                                                                 |
-| Blake                                                                  |
-| Clark                                                                  |
-| Scott                                                                  |
-| King                                                                   |
-| Turner                                                                 |
-| Adams                                                                  |
-| James                                                                  |
-| Ford                                                                   |
-| Miller                                                                 |
-+------------------------------------------------------------------------+
-14 rows in set (0.00 sec)
-
+					mysql> select ename from emp where substr(ename,1,1) = 'A';
+					+-------+
+					| ename |
+					+-------+
+					| ALLEN |
+					| ADAMS |
+					+-------+
+				     使员工名字首字母大写，使用concat拼接
+					mysql> select concat (upper(substr(ename,1,1)),lower(substr(ename,2,length(ename))))from emp;
+					+------------------------------------------------------------------------+
+					| concat (upper(substr(ename,1,1)),lower(substr(ename,2,length(ename)))) |
+					+------------------------------------------------------------------------+
+					| Smith                                                                  |
+					| Allen                                                                  |
+					| Ward                                                                   |
+					| Jones                                                                  |
+					| Martin                                                                 |
+					| Blake                                                                  |
+					| Clark                                                                  |
+					| Scott                                                                  |
+					| King                                                                   |
+					| Turner                                                                 |
+					| Adams                                                                  |
+					| James                                                                  |
+					| Ford                                                                   |
+					| Miller                                                                 |
+					+------------------------------------------------------------------------+
 			    length 取长度
+			    		select length(ename) from emp;
 			    trim   去空格
 			    str_to_date  将字符串转换为日期
 			    date_format  格式化日期
 			    format 设置千分位
 	 		    round  四舍五入
-			    rand() 生成随机数
-			    ifnull 可以将null转换为一个具体值
-	
+			    	select round(数字，n) //n指的使保留几位小数，如果n是负数，则是保留到多少位，例如-1，是保留到十位
+			    	select ename from emp;
+				select 'abc' from emp;
+				select round(123.64) as result from emo;
 
+			    rand() 生成随机数
+
+			    ifnull 可以将null转换为一个具体值
+			    	null只要参与运算，结果一定是null，为了避免这个现象，需要使用ifnull函数
+				select（comm，0） from emp;就是将comm里面的null转换为0；
+			    case .. when .. then .. when .. then .. else .. end;
+			    当员工的工作岗位是MANAGER的时候工资上调10%，当工作岗位是SALESMAN的时候，工资上调50；
+			    select empno,
+				ename,
+				job,
+				(case job when 'MANAGER' then sal*1.1 when 'SALESMAN' then sal*1.5 else sal end) as newsal
+			    from emp;
+
+				+-------+--------+-----------+---------+
+				| empno | ename  | job       | newsal  |
+				+-------+--------+-----------+---------+
+				|  7369 | SMITH  | CLERK     |  800.00 |
+				|  7499 | ALLEN  | SALESMAN  | 2400.00 |
+				|  7521 | WARD   | SALESMAN  | 1875.00 |
+				|  7566 | JONES  | MANAGER   | 3272.50 |
+				|  7654 | MARTIN | SALESMAN  | 1875.00 |
+				|  7698 | BLAKE  | MANAGER   | 3135.00 |
+				|  7782 | CLARK  | MANAGER   | 2695.00 |
+				|  7788 | SCOTT  | ANALYST   | 3000.00 |
+				|  7839 | KING   | PRESIDENT | 5000.00 |
+				|  7844 | TURNER | SALESMAN  | 2250.00 |
+				|  7876 | ADAMS  | CLERK     | 1100.00 |
+				|  7900 | JAMES  | CLERK     |  950.00 |
+				|  7902 | FORD   | ANALYST   | 3000.00 |
+				|  7934 | MILLER | CLERK     | 1300.00 |
+				+-------+--------+-----------+---------+
+
+
+分组函数（多行处理函数）
+	多行处理函数的特点：输入多行，输出一行；
+	5个：
+	    count    计数
+	    sum	     求和
+	    avg	     平均值
+	    max      最大值
+	    min      最小值
+	
+	注意：
+	    分组函数在使用的时候需要先进行分组，然后才能用
+	    如果没对数据进行分组，整张表默认为一组
+	
+	分组函数在使用的时候的注意事项：
+		分组函数自动忽略null，不需要对null处理
+		分组函数中count（*）和count（具体字段）的区别
+			count（具体字段）：统计该字段下所有不为null的元素总数
+			count（*）是表示统计整个行记录（只要某一行不全为null，则count++）
+		分组函数不能直接使用在where子句中；
+			select ename,sal from emp where sal > min(sal); × 原因就是分组函数必须先分组，where执行的时候，还没有分组。
+						 		  	 														
+
+		所有的分组函数可以组合起来一起用
+
+
+分组查询*****
+	什么是分组查询，先对数据进行分组，然后对每一组数据进行操作。
+		select .. from .. group .. by ..
+	
+	将之前的关键字全部组合在一起，看一下他们的执行顺序：
+		select .. from .. where .. group .. by
+		以上关键字的顺序不能颠倒
+		1.from
+		2.where
+		3.group by
+		4.select
+		5.order by
+	找出每个工作岗位的工资和
+		select sum(sal) as sumsal from emp group by job;
+		+-----------+---------+
+		| job       | sumsal  |
+		+-----------+---------+
+		| ANALYST   | 6000.00 |
+		| CLERK     | 4150.00 |
+		| MANAGER   | 8275.00 |
+		| PRESIDENT | 5000.00 |
+		| SALESMAN  | 5600.00 |
+		+-----------+---------+
 
 
 
