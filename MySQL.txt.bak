@@ -179,8 +179,8 @@ DQL：
 		3.group by
 		4.select
 		5.order by
-	找出每个工作岗位的工资和
-		select sum(sal) as sumsal from emp group by job;
+	找出每个工作岗位的工资和:在一条select语句中，若果有group by，后面的只能跟参加分组的字段，以及分组函数，其他一律不能跟
+		select job,sum(sal) as sumsal from emp group by job;
 		+-----------+---------+
 		| job       | sumsal  |
 		+-----------+---------+
@@ -190,6 +190,75 @@ DQL：
 		| PRESIDENT | 5000.00 |
 		| SALESMAN  | 5600.00 |
 		+-----------+---------+
+	找出每个部门，不同工作岗位的最高薪资
+		mysql> select job,deptno,max(sal) from emp group by deptno,job;
+		+-----------+--------+----------+
+		| job       | deptno | max(sal) |
+		+-----------+--------+----------+
+		| CLERK     |     10 |  1300.00 |
+		| MANAGER   |     10 |  2450.00 |
+		| PRESIDENT |     10 |  5000.00 |
+		| ANALYST   |     20 |  3000.00 |
+		| CLERK     |     20 |  1100.00 |
+		| MANAGER   |     20 |  2975.00 |
+		| CLERK     |     30 |   950.00 |
+		| MANAGER   |     30 |  2850.00 |
+		| SALESMAN  |     30 |  1600.00 |
+		+-----------+--------+----------+
+	使用having可以对分完组之后的数据进一步过滤，having不能单独使用，having不能和where同时使用。
+	找出每个部门最高薪资，要求显示最高薪资大于三千的
+		mysql> select deptno,max(sal) from emp group by deptno having max(sal) > 3000;
+		+--------+----------+
+		| deptno | max(sal) |
+		+--------+----------+
+		|     10 |  5000.00 |
+		+--------+----------+
+
+		mysql> select deptno,max(sal) from emp  where sal > 3000 group by deptno;
+		+--------+----------+
+		| deptno | max(sal) |
+		+--------+----------+
+		|     10 |  5000.00 |
+		+--------+----------+
+
+总结（单表查询）
+select
+..
+from
+..
+where
+..
+group by
+..
+having
+..
+order by
+..
+	执行顺序
+	1.from
+	2.wher
+	3.select
+	4.group by
+	5.having
+	6.order by
+
+
+连接查询
+	去重，前面加distinct，distinct只能出现在字段的前方，而且如果后面跟好几个字段是联合查重
+		select distinct job,deptno from emp ;
+		+-----------+--------+
+		| job       | deptno |
+		+-----------+--------+
+		| CLERK     |     20 |
+		| SALESMAN  |     30 |
+		| MANAGER   |     20 |
+		| MANAGER   |     30 |
+		| MANAGER   |     10 |
+		| ANALYST   |     20 |
+		| PRESIDENT |     10 |
+		| CLERK     |     30 |
+		| CLERK     |     10 |
+		+-----------+--------+
 
 
 

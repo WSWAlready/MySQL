@@ -259,7 +259,188 @@ order by
 		| CLERK     |     30 |
 		| CLERK     |     10 |
 		+-----------+--------+
+	从一张表中单独查询，称为单独查询，emp和dept联合起来查询数据
+	连接查询的分类：
+		SQL92，SQL99
 
+	根据表链接的方式分类：
+		内连接：
+			等值连接
+			非等值连接
+			自链接
+		外连接：
+			左外连接
+			右外连接
+		全连接
+	当两张表没有任何限制进行连接时：
+		案例：查询每个员工的所在部门名称
+		mysql>  select ename,deptno from emp;
+		+--------+--------+
+		| ename  | deptno |
+		+--------+--------+
+		| SMITH  |     20 |
+		| ALLEN  |     30 |
+		| WARD   |     30 |
+		| JONES  |     20 |
+		| MARTIN |     30 |
+		| BLAKE  |     30 |
+		| CLARK  |     10 |
+		| SCOTT  |     20 |
+		| KING   |     10 |
+		| TURNER |     30 |
+		| ADAMS  |     20 |
+		| JAMES  |     30 |
+		| FORD   |     20 |
+		| MILLER |     10 |
+		+--------+--------+
+		mysql> select * from dept;
+		+--------+------------+----------+
+		| DEPTNO | DNAME      | LOC      |
+		+--------+------------+----------+
+		|     10 | ACCOUNTING | NEW YORK |
+		|     20 | RESEARCH   | DALLAS   |
+		|     30 | SALES      | CHICAGO  |
+		|     40 | OPERATIONS | BOSTON   |
+		+--------+------------+----------+
+		两张表连接没有任何条件限制：
+		+--------+------------+
+		| ename  | dname      |
+		+--------+------------+
+		| SMITH  | ACCOUNTING |
+		| SMITH  | RESEARCH   |
+		| SMITH  | SALES      |
+		| SMITH  | OPERATIONS |
+		| MILLER | ACCOUNTING |
+		| MILLER | RESEARCH   |
+		| MILLER | SALES      |
+		| MILLER | OPERATIONS |
+		+--------+------------+
+		56 rows in set (0.00 sec)
+		这是因为两个表中，一个ename匹配四个选项
+	怎么避免笛卡儿积现象：
+		连接时加条件，满足这个条件的记录被筛选出来
+		select
+		   ename,dname
+		from 
+		   emp,dept
+		where
+		   emp.deptno = dept.deptno;
+		+--------+------------+
+		| ename  | dname      |
+		+--------+------------+
+		| CLARK  | ACCOUNTING |
+		| KING   | ACCOUNTING |
+		| MILLER | ACCOUNTING |
+		| SMITH  | RESEARCH   |
+		| JONES  | RESEARCH   |
+		| SCOTT  | RESEARCH   |
+		| ADAMS  | RESEARCH   |
+		| FORD   | RESEARCH   |
+		| ALLEN  | SALES      |
+		| WARD   | SALES      |
+		| MARTIN | SALES      |
+		| BLAKE  | SALES      |
+		| TURNER | SALES      |
+		| JAMES  | SALES      |
+		+--------+------------+
+		14 rows in set (0.07 sec)
+		但是匹配次数并没有减少
+	表起别名
+	select
+		e.ename,d.dname
+	from 
+		emp e,dept d
+	where
+		e.deptno = d.deptno;//SQL92语法
+		+--------+------------+
+		| ename  | dname      |
+		+--------+------------+
+		| CLARK  | ACCOUNTING |
+		| KING   | ACCOUNTING |
+		| MILLER | ACCOUNTING |
+		| SMITH  | RESEARCH   |
+		| JONES  | RESEARCH   |
+		| SCOTT  | RESEARCH   |
+		| ADAMS  | RESEARCH   |
+		| FORD   | RESEARCH   |
+		| ALLEN  | SALES      |
+		| WARD   | SALES      |
+		| MARTIN | SALES      |
+		| BLAKE  | SALES      |
+		| TURNER | SALES      |
+		| JAMES  | SALES      |
+		+--------+------------+
+	内连接之等值连接
+		查询每个员工的所在部门名称，显示员工名和部门名；
+		SQL99语法：
+		select
+			e.ename,d.dname
+		from 
+			emp e
+		inner (可省略)join 
+			dept d
+		on
+			e.deptno = d.deptno;
+	内连接之非等值连接
+		找出每个员工的薪资等级，要求显示员工名，薪资，薪资等级
+		select
+			e.ename,e.sal,s.grade
+		from
+			emp e
+		join
+			salgrade s
+		on 
+			sal between losal and hisal;(条件不是等量关系)
+			+--------+---------+-------+
+			| ename  | sal     | grade |
+			+--------+---------+-------+
+			| SMITH  |  800.00 |     1 |
+			| ALLEN  | 1600.00 |     3 |
+			| WARD   | 1250.00 |     2 |
+			| JONES  | 2975.00 |     4 |
+			| MARTIN | 1250.00 |     2 |
+			| BLAKE  | 2850.00 |     4 |
+			| CLARK  | 2450.00 |     4 |
+			| SCOTT  | 3000.00 |     4 |
+			| KING   | 5000.00 |     5 |
+			| TURNER | 1500.00 |     3 |
+			| ADAMS  | 1100.00 |     1 |
+			| JAMES  |  950.00 |     1 |
+			| FORD   | 3000.00 |     4 |
+			| MILLER | 1300.00 |     2 |
+			+--------+---------+-------+
+			14 rows in set (0.13 sec)
+	内连接之自连接
+		查询员工的上级领导，要求显示员工名和对应领导名
+		select
+			a.ename,b.ename
+		from 
+			emp a
+		join 
+			emp b
+		on
+			a.mgr = b.empno;
+		将一张表看成两张表
+		+--------+-------+
+		| ename  | ename |
+		+--------+-------+
+		| SMITH  | FORD  |
+		| ALLEN  | BLAKE |
+		| WARD   | BLAKE |
+		| JONES  | KING  |
+		| MARTIN | BLAKE |
+		| BLAKE  | KING  |
+		| CLARK  | KING  |
+		| SCOTT  | JONES |
+		| TURNER | BLAKE |
+		| ADAMS  | SCOTT |
+		| JAMES  | BLAKE |
+		| FORD   | JONES |
+		| MILLER | CLARK |
+		+--------+-------+
+		13 rows in set (0.03 sec)
+		
+		
 
 
 
