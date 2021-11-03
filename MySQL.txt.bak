@@ -259,7 +259,380 @@ order by
 		| CLERK     |     30 |
 		| CLERK     |     10 |
 		+-----------+--------+
+	从一张表中单独查询，称为单独查询，emp和dept联合起来查询数据
+	连接查询的分类：
+		SQL92，SQL99
 
+	根据表链接的方式分类：
+		内连接：
+			等值连接
+			非等值连接
+			自链接
+		外连接：
+			左外连接
+			右外连接
+		全连接
+	当两张表没有任何限制进行连接时：
+		案例：查询每个员工的所在部门名称
+		mysql>  select ename,deptno from emp;
+		+--------+--------+
+		| ename  | deptno |
+		+--------+--------+
+		| SMITH  |     20 |
+		| ALLEN  |     30 |
+		| WARD   |     30 |
+		| JONES  |     20 |
+		| MARTIN |     30 |
+		| BLAKE  |     30 |
+		| CLARK  |     10 |
+		| SCOTT  |     20 |
+		| KING   |     10 |
+		| TURNER |     30 |
+		| ADAMS  |     20 |
+		| JAMES  |     30 |
+		| FORD   |     20 |
+		| MILLER |     10 |
+		+--------+--------+
+		mysql> select * from dept;
+		+--------+------------+----------+
+		| DEPTNO | DNAME      | LOC      |
+		+--------+------------+----------+
+		|     10 | ACCOUNTING | NEW YORK |
+		|     20 | RESEARCH   | DALLAS   |
+		|     30 | SALES      | CHICAGO  |
+		|     40 | OPERATIONS | BOSTON   |
+		+--------+------------+----------+
+		两张表连接没有任何条件限制：
+		+--------+------------+
+		| ename  | dname      |
+		+--------+------------+
+		| SMITH  | ACCOUNTING |
+		| SMITH  | RESEARCH   |
+		| SMITH  | SALES      |
+		| SMITH  | OPERATIONS |
+		| MILLER | ACCOUNTING |
+		| MILLER | RESEARCH   |
+		| MILLER | SALES      |
+		| MILLER | OPERATIONS |
+		+--------+------------+
+		56 rows in set (0.00 sec)
+		这是因为两个表中，一个ename匹配四个选项
+	怎么避免笛卡儿积现象：
+		连接时加条件，满足这个条件的记录被筛选出来
+		select
+		   ename,dname
+		from 
+		   emp,dept
+		where
+		   emp.deptno = dept.deptno;
+		+--------+------------+
+		| ename  | dname      |
+		+--------+------------+
+		| CLARK  | ACCOUNTING |
+		| KING   | ACCOUNTING |
+		| MILLER | ACCOUNTING |
+		| SMITH  | RESEARCH   |
+		| JONES  | RESEARCH   |
+		| SCOTT  | RESEARCH   |
+		| ADAMS  | RESEARCH   |
+		| FORD   | RESEARCH   |
+		| ALLEN  | SALES      |
+		| WARD   | SALES      |
+		| MARTIN | SALES      |
+		| BLAKE  | SALES      |
+		| TURNER | SALES      |
+		| JAMES  | SALES      |
+		+--------+------------+
+		14 rows in set (0.07 sec)
+		但是匹配次数并没有减少
+	表起别名
+	select
+		e.ename,d.dname
+	from 
+		emp e,dept d
+	where
+		e.deptno = d.deptno;//SQL92语法
+		+--------+------------+
+		| ename  | dname      |
+		+--------+------------+
+		| CLARK  | ACCOUNTING |
+		| KING   | ACCOUNTING |
+		| MILLER | ACCOUNTING |
+		| SMITH  | RESEARCH   |
+		| JONES  | RESEARCH   |
+		| SCOTT  | RESEARCH   |
+		| ADAMS  | RESEARCH   |
+		| FORD   | RESEARCH   |
+		| ALLEN  | SALES      |
+		| WARD   | SALES      |
+		| MARTIN | SALES      |
+		| BLAKE  | SALES      |
+		| TURNER | SALES      |
+		| JAMES  | SALES      |
+		+--------+------------+
+	内连接之等值连接
+		查询每个员工的所在部门名称，显示员工名和部门名；
+		SQL99语法：
+		select
+			e.ename,d.dname
+		from 
+			emp e
+		inner (可省略)join 
+			dept d
+		on
+			e.deptno = d.deptno;
+	内连接之非等值连接
+		找出每个员工的薪资等级，要求显示员工名，薪资，薪资等级
+		select
+			e.ename,e.sal,s.grade
+		from
+			emp e
+		join
+			salgrade s
+		on 
+			sal between losal and hisal;(条件不是等量关系)
+			+--------+---------+-------+
+			| ename  | sal     | grade |
+			+--------+---------+-------+
+			| SMITH  |  800.00 |     1 |
+			| ALLEN  | 1600.00 |     3 |
+			| WARD   | 1250.00 |     2 |
+			| JONES  | 2975.00 |     4 |
+			| MARTIN | 1250.00 |     2 |
+			| BLAKE  | 2850.00 |     4 |
+			| CLARK  | 2450.00 |     4 |
+			| SCOTT  | 3000.00 |     4 |
+			| KING   | 5000.00 |     5 |
+			| TURNER | 1500.00 |     3 |
+			| ADAMS  | 1100.00 |     1 |
+			| JAMES  |  950.00 |     1 |
+			| FORD   | 3000.00 |     4 |
+			| MILLER | 1300.00 |     2 |
+			+--------+---------+-------+
+			14 rows in set (0.13 sec)
+	内连接之自连接
+		查询员工的上级领导，要求显示员工名和对应领导名
+		select
+			a.ename,b.ename
+		from 
+			emp a
+		join 
+			emp b
+		on
+			a.mgr = b.empno;
+		将一张表看成两张表
+		+--------+-------+
+		| ename  | ename |
+		+--------+-------+
+		| SMITH  | FORD  |
+		| ALLEN  | BLAKE |
+		| WARD   | BLAKE |
+		| JONES  | KING  |
+		| MARTIN | BLAKE |
+		| BLAKE  | KING  |
+		| CLARK  | KING  |
+		| SCOTT  | JONES |
+		| TURNER | BLAKE |
+		| ADAMS  | SCOTT |
+		| JAMES  | BLAKE |
+		| FORD   | JONES |
+		| MILLER | CLARK |
+		+--------+-------+
+		13 rows in set (0.03 sec)
+	外连接（右外连接）
+		外连接有主次关系，内连接没有
+		select
+			e.ename,d.dname
+		from 
+			emp e right
+		（outer可以省略）join 
+			dept d
+		on
+			e.deptno = d.deptno ;
+		right(表示将join关键字右边的这张表看成主表，主要是将这张表的数据全部查询出来)
+		带right的是右连接，带left的是左连接
+		+--------+------------+
+		| ename  | dname      |
+		+--------+------------+
+		| CLARK  | ACCOUNTING |
+		| KING   | ACCOUNTING |
+		| MILLER | ACCOUNTING |
+		| SMITH  | RESEARCH   |
+		| JONES  | RESEARCH   |
+		| SCOTT  | RESEARCH   |
+		| ADAMS  | RESEARCH   |
+		| FORD   | RESEARCH   |
+		| ALLEN  | SALES      |
+		| WARD   | SALES      |
+		| MARTIN | SALES      |
+		| BLAKE  | SALES      |
+		| TURNER | SALES      |
+		| JAMES  | SALES      |
+		| NULL   | OPERATIONS |
+		+--------+------------+
+		15 rows in set (0.00 sec)
+		查询每个员工的上级领导，要求显示所有员工的名字和领导名
+		mysql> select ename,empno,mgr from emp;
+		+--------+-------+------+
+		| ename  | empno | mgr  |
+		+--------+-------+------+
+		| SMITH  |  7369 | 7902 |
+		| ALLEN  |  7499 | 7698 |
+		| WARD   |  7521 | 7698 |
+		| JONES  |  7566 | 7839 |
+		| MARTIN |  7654 | 7698 |
+		| BLAKE  |  7698 | 7839 |
+		| CLARK  |  7782 | 7839 |
+		| SCOTT  |  7788 | 7566 |
+		| KING   |  7839 | NULL |
+		| TURNER |  7844 | 7698 |
+		| ADAMS  |  7876 | 7788 |
+		| JAMES  |  7900 | 7698 |
+		| FORD   |  7902 | 7566 |
+		| MILLER |  7934 | 7782 |
+		+--------+-------+------+
+		14 rows in set (0.00 sec)
+		select 
+			a.ename as '员工名',b.ename as '领导名'
+		from 
+			emp a left
+		join
+			emp b
+		on
+			a.mgr = b.empno;
+		+--------+--------+
+		| 员工名 | 领导名 |
+		+--------+--------+
+		| SMITH  | FORD   |
+		| ALLEN  | BLAKE  |
+		| WARD   | BLAKE  |
+		| JONES  | KING   |
+		| MARTIN | BLAKE  |
+		| BLAKE  | KING   |
+		| CLARK  | KING   |
+		| SCOTT  | JONES  |
+		| KING   | NULL   |
+		| TURNER | BLAKE  |
+		| ADAMS  | SCOTT  |
+		| JAMES  | BLAKE  |
+		| FORD   | JONES  |
+		| MILLER | CLARK  |
+		+--------+--------+
+		14 rows in set (0.00 sec)
+三张表，四张表的连接
+	语法：
+		select
+			...
+		from 
+			a
+		join
+			b
+		on
+			a和b的连接条件
+		join
+			c
+		on
+			a和c的连接条件
+		join
+			d
+		on
+			a和d的连接条件
+		一条SQL中内连接和外连接可以混合
+		,e.sal,s.grade
+	找出每个员工的部门名称以及薪资等级，要求显示员工名，部门名，薪资，薪资等级；
+		select
+			e.ename,d.dname	,e.sal,s.grade
+		from 
+			emp e
+		join 
+			dept d
+		on
+			e.deptno = d.deptno
+		join
+			salgrade s
+		on 
+			e.sal between s.losal and s.hisal;
+		+--------+------------+---------+-------+
+		| ename  | dname      | sal     | grade |
+		+--------+------------+---------+-------+
+		| SMITH  | RESEARCH   |  800.00 |     1 |
+		| ALLEN  | SALES      | 1600.00 |     3 |
+		| WARD   | SALES      | 1250.00 |     2 |
+		| JONES  | RESEARCH   | 2975.00 |     4 |
+		| MARTIN | SALES      | 1250.00 |     2 |
+		| BLAKE  | SALES      | 2850.00 |     4 |
+		| CLARK  | ACCOUNTING | 2450.00 |     4 |
+		| SCOTT  | RESEARCH   | 3000.00 |     4 |
+		| KING   | ACCOUNTING | 5000.00 |     5 |
+		| TURNER | SALES      | 1500.00 |     3 |
+		| ADAMS  | RESEARCH   | 1100.00 |     1 |
+		| JAMES  | SALES      |  950.00 |     1 |
+		| FORD   | RESEARCH   | 3000.00 |     4 |
+		| MILLER | ACCOUNTING | 1300.00 |     2 |
+		+--------+------------+---------+-------+
+		14 rows in set (0.00 sec)
+	找出每个员工的部门名称以及薪资等级，领导的名字，要求显示员工名，部门名，薪资，薪资等级；
+		select
+			e.ename,d.dname,e.sal,s.grade,l.ename as '领导名'
+		from 
+			emp e
+		join 
+			dept d
+		on
+			e.deptno = d.deptno
+		join
+			salgrade s
+		on 
+			e.sal between s.losal and s.hisal
+		left join
+			emp l
+		on 
+			e.mgr = l.empno；
+		+--------+------------+---------+-------+--------+
+		| ename  | dname      | sal     | grade | 领导名     |
+		+--------+------------+---------+-------+--------+
+		| SMITH  | RESEARCH   |  800.00 |     1 | FORD   |
+		| ALLEN  | SALES      | 1600.00 |     3 | BLAKE  |
+		| WARD   | SALES      | 1250.00 |     2 | BLAKE  |
+		| JONES  | RESEARCH   | 2975.00 |     4 | KING   |
+		| MARTIN | SALES      | 1250.00 |     2 | BLAKE  |
+		| BLAKE  | SALES      | 2850.00 |     4 | KING   |
+		| CLARK  | ACCOUNTING | 2450.00 |     4 | KING   |
+		| SCOTT  | RESEARCH   | 3000.00 |     4 | JONES  |
+		| KING   | ACCOUNTING | 5000.00 |     5 | NULL   |
+		| TURNER | SALES      | 1500.00 |     3 | BLAKE  |
+		| ADAMS  | RESEARCH   | 1100.00 |     1 | SCOTT  |
+		| JAMES  | SALES      |  950.00 |     1 | BLAKE  |
+		| FORD   | RESEARCH   | 3000.00 |     4 | JONES  |
+		| MILLER | ACCOUNTING | 1300.00 |     2 | CLARK  |
+		+--------+------------+---------+-------+--------+
+
+子查询：
+	select语句嵌套select语句，被嵌套的select语句称为子查询,先执行子查询
+	
+	子查询可以出现在哪里？
+		select
+			（select）
+		from 
+			（select）
+		where
+			（select）
+	where子句中的子查询
+		找出比最低工资高的员工姓名和工资
+		select
+			ename,sal
+		from emp
+		where
+			sal > (select  min(sal) from emp);
+	from子句中的子查询
+		from的子查询可以将子查询的结果当作一张临时表；
+		找出每个岗位的平均工资的薪资等级
+		第一步：select job,avg(sal) from emp group by job;
+		select
+			s.grade,j.avg()
+
+			
+		
 
 
 
