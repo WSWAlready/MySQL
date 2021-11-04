@@ -629,8 +629,22 @@ order by
 		找出每个岗位的平均工资的薪资等级
 		第一步：select job,avg(sal) from emp group by job;
 		select
-			s.grade,j.avg()
-
+			s.grade,j.*
+		from 
+			(select job,avg(sal) as avgsal from emp group by job) j
+		join 
+			salgrade s
+		on 
+			j.avgsal between s.losal and s.hisal;
+		+-------+-----------+-------------+
+		| grade | job       | sal         |
+		+-------+-----------+-------------+
+		|     1 | CLERK     | 1037.500000 |
+		|     2 | SALESMAN  | 1400.000000 |
+		|     4 | ANALYST   | 3000.000000 |
+		|     4 | MANAGER   | 2758.333333 |
+		|     5 | PRESIDENT | 5000.000000 |
+		+-------+-----------+-------------+
 			
 		
 
