@@ -645,7 +645,58 @@ order by
 		|     4 | MANAGER   | 2758.333333 |
 		|     5 | PRESIDENT | 5000.000000 |
 		+-------+-----------+-------------+
-			
+limit
+	limit的作用：将查询结果集的一部分取出来，通常使用在分页查询，分页的作用是为了提高用户的体验
+		因为一次全部查出来，用户体验差，可以翻页看
+	
+	limit的使用
+		按照薪资降序排序，去除排名在前5名的员工
+		select 
+			ename,sal
+		from 
+			emp
+		order by
+			sal desc
+		limit 5;
+		+-------+---------+
+		| ename | sal     |
+		+-------+---------+
+		| KING  | 5000.00 |
+		| SCOTT | 3000.00 |
+		| FORD  | 3000.00 |
+		| JONES | 2975.00 |
+		| BLAKE | 2850.00 |
+		+-------+---------+
+		5 rows in set (0.05 sec)(缺省用法，limit 5；这是去前5)
+		完整用法：limit startIndex,length
+			startIndex是起始下标，length是长度
+			起始下标默认是从0 开始
+		注意：limit在order by之后执行
+
+分页
+	每一页显示3条记录
+	第一页：limit 0，3
+	
+
+表
+	表的创建
+	建表属于DDL语句包括：create drop alter
+	语法格式：create table 表名（字段名1 数据类型 ，字段名2 数据类型，字段名3 数据类型）；
+	表名：建议以t_ 或者tbl_开始，可读性强
+	
+	关于mysql的数据类型
+	varchar 
+		可变长度的字符串
+		比较智能，节省空间，根据实际的数据长度动态分配空间
+	char
+		定长字符串
+		不管实际的数据长度是多少，分配固定长度的空间
+		存储数据，使用不恰当的时候会导致空间浪费
+	int
+	bigint
+	float
+	double
+
 		
 
 

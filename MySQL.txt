@@ -680,28 +680,85 @@ limit
 
 表
 	表的创建
-	建表属于DDL语句包括：create drop alter
-	语法格式：create table 表名（字段名1 数据类型 ，字段名2 数据类型，字段名3 数据类型）；
-	表名：建议以t_ 或者tbl_开始，可读性强
-	
-	关于mysql的数据类型
-	varchar 
-		可变长度的字符串
-		比较智能，节省空间，根据实际的数据长度动态分配空间
-	char
-		定长字符串
-		不管实际的数据长度是多少，分配固定长度的空间
-		存储数据，使用不恰当的时候会导致空间浪费
-	int
-	bigint
-	float
-	double
-
+		建表属于DDL语句包括：create drop alter
+		语法格式：create table 表名（字段名1 数据类型 ，字段名2 数据类型，字段名3 数据类型）；
+		表名：建议以t_ 或者tbl_开始，可读性强
 		
+		关于mysql的数据类型
+		varchar （最长255）
+			可变长度的字符串
+			比较智能，节省空间，根据实际的数据长度动态分配空间
+		char
+			定长字符串
+			不管实际的数据长度是多少，分配固定长度的空间
+			存储数据，使用不恰当的时候会导致空间浪费
+		int（长度11）
+			数字中的整数性
+		bigint
+			数字中的长整形
+		float
+			数字中的浮点型
+		double
+			数字中的双精度浮点型
+		clob
+			字符大的对象，最多存储4G的字符串，超过255个字符的都要采用：clob
+		blob
+			二进制大对象，专门存储图片声音，视频等流媒体，需要使用IO流；
+	
+	t_movie		电影表（存储电影信息）
+		编号		名字		描述			上映日期		时长			海报
+		no(bigint)	name(varchar)	description(clob)	playtime(date)		time(double)		image(clob)
+		10000		哪吒		。。。。。。		2019-10-11		2.5			。。。。
+		10001		战狼		。。。。。。		2019-10-12		2.3			。。。。
 
-
-
-
+	t_student
+		学号		姓名			年龄		性别		邮箱地址
+		no(int)		name(varchar(32))	age(int(3))	sex(char(1))	email(int(11))
+		create table t_student
+		(
+			no int,
+			name varchar(32),
+			age int(3),
+			sex char(1),
+			email int(11)
+		);
+	修改数据类型：alter table 表名   modify 字段名 新的数据类型
+	插入数据，insert(DML)
+		语法格式：
+			insert into 表名(字段1，字段名2，字段名3.。。) values(值1，值2，值3)；
+			注意：字段名和值要一一对应，就是数量要对应，数据类型要对应
+			insert into t_student(no,name,age,sex,email) values(1,'neimaer','20','m','12345678');
+			没有给默认值，默认值就是NULL；
+	格式化数字（format(数字,‘格式’)）
+		select ename,format(sal,'$999,999') as sal from emp;
+		+--------+-------+
+		| ename  | sal   |
+		+--------+-------+
+		| SMITH  | 800   |
+		| ALLEN  | 1,600 |
+		| WARD   | 1,250 |
+		| JONES  | 2,975 |
+		| MARTIN | 1,250 |
+		| BLAKE  | 2,850 |
+		| CLARK  | 2,450 |
+		| SCOTT  | 3,000 |
+		| KING   | 5,000 |
+		| TURNER | 1,500 |
+		| ADAMS  | 1,100 |
+		| JAMES  | 950   |
+		| FORD   | 3,000 |
+		| MILLER | 1,300 |
+		+--------+-------+
+	str_to_date：将字符串varchar类型转换为date类型
+	date_format：将date类型转换为具有一定格式的varchar字符串类型
+		所有的标识符全都是小写，单词和单词之间使用下划线进行衔接；
+	mysql的日期格式
+	%Y 年
+	%m 月
+	%d 日
+	%h 小时
+	%i 分
+	%s 秒
 
 
 
