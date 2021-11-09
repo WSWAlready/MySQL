@@ -848,6 +848,60 @@ limit
 
 		在mysql中，如果一个字段同时被not null和unique约束的话，该字段被设置为主键字段，但是在Oracle里不一样
 	
+
+
+	主键约束（primary key）
+		主键字段：该字段添加了主键约束，这样的字段叫做：主键字段
+		主键值：主键字段中的每一个值叫做：主键值
+
+		主键值是每一行记录的唯一标识
+		主键值是每一行的身份证号
+
+		注意：任何一张表都应该有主键
+		
+		怎么添加主键
+		drop table if exists t_vip;
+		create table t_vip(
+			id int	primary key,//列级约束
+			name varchar(255),
+			primary key(id)//表级约束
+			)；
+		一个表中的主键约束能加两个吗？不能主键只能有一个
+
+		主键的建议使用
+			int
+			bigint
+			char
+			等类型
+			不建议使用变长类型做主键
+		
+		主键分为：单一主键，复合主键，自然主键（主键值是自然数，和业务没关系），业务主键（主键值和业务紧密联系，例如银行卡号作为主键值）
+			主键只要做到不重复就行，推荐使用自然主键
+		create	table  t_vip(
+			id int primary key auto_increment,//auto_increment表示自增，从1开始
+			name varchar(255)
+		);
+	外键约束(foreign key 简称PK)
+		外键约束的相关术语
+			外键字段：该字段添加了外键约束
+			外键值：外键字段当中的每一个值
+		业务背景：
+			设计数据库表，来描述“班级和学生的信息”
+			第一种方案：班级和学生放在一起
+				产生数据冗余，空间浪费
+			
+			第二种方案：创建两个表，班级表和学生表
+		外键被引用的是父表，引用的是子表。删除的时候是先删除子，后删除父。创建的时候是先创父再创子
+
+		create table t_vip(
+			id int	primary key,//列级约束
+			name varchar(255),
+			foreign key (cno) reference t_class(classno) //使用方法
+			)； 
+		
+		思考：子表中的外键引用的父表中的某个字段，被引用的这个字段必须是主键吗
+			不一定是主键，但至少具有唯一性unique，
+		思考：外键可以为NULL 吗？  可以
 			
 
 

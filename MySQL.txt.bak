@@ -804,6 +804,50 @@ limit
 
 		truncate
 		删除效率高，表被一次截断，物理删除，但是不支持回滚。
+	删除表的结构
+		删除一个字段，删除一个字段，修改一个字段，
+		对表的结构修改使用的是alter
+
+约束
+	什么是约束
+		约束对应的是：constraint
+	常见约束
+		非空约束 ：not null
+		唯一性约束：	unique
+		主键约束：primary key简称PK
+		外键约束：foreign key简称FK
+		检查约束：check		mysql不支持，oracle支持
+	
+	非空约束：not null  只有列级约束，没有表级约束
+		非空约束的字段不能为空
+		create table t_vip(
+			id int,
+			name varchar(255) not null
+			);
+		insert into t_vip(id,name)values(1,'zhangsan');
+		insert into t_vip(id,name)values(2,'lisi');
+		insert into t_vip(id,name)values(3);
+		批量添加：xx.sql这种文件被称为sql文件，我们执行sql脚本文件的时候，该文件的所有的sql语句全部执行，
+			批量执行sql语句时，可以使用sql脚本文件
+			怎么执行：source 加绝对路径
+	唯一性约束：unique
+		约束的字段不能重复，但可以为null
+		两个字段联合起来唯一性
+		drop table if exist t_vip;
+		create table t_vip(
+			id int,
+			name varchar(255), 
+			email varchar(255) ,
+			unique(name,email)	//约束没有添加在列后面，这种约束被称为表级约束
+			);
+			name和email联合起来唯一
+		insert into t_vip(id,name,email)values(1,'zhangsan',zhangsan@123.com);
+		insert into t_vip(id,name,email)values(2,'zhangsan',zhangsan@sina.com);
+		insert into t_vip(id,name,email)values(3,'zhangsan',zhangsan@sina.com);
+		
+
+		在mysql中，如果一个字段同时被not null和unique约束的话，该字段被设置为主键字段，但是在Oracle里不一样
+	
 			
 
 
