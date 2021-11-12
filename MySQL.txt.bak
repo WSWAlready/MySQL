@@ -902,9 +902,130 @@ limit
 		思考：子表中的外键引用的父表中的某个字段，被引用的这个字段必须是主键吗
 			不一定是主键，但至少具有唯一性unique，
 		思考：外键可以为NULL 吗？  可以
+
+
+存储引擎
+	什么是存储引擎？存储引擎是一个表存储数据的方式，不同的存储引擎，存储数据的方式不同
+
+	怎么增加或指定存储引擎
+		show create table t_vip;
+		可以在建表的时候给表指定存储引擎
+		+--------+--------------
+		| Table  | Create Table                                                                                                                                                                                    |
+		+--------+----------------------------
+		| t_user | CREATE TABLE `t_user` (
+		  `id` int(11) DEFAULT NULL,
+		  `name` varchar(32) DEFAULT NULL,
+		  `birth` date DEFAULT NULL,
+		  `create_time` datetime DEFAULT NULL
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 |
+		+--------+-----------------------------
+		在建表的时候看可以在最后的小括号的右边使用：ENGINE来指定存储引擎
+							    CHARSET来指定表的字符编码方式
+		
+		mysql默认的存储引擎是：InnoDB
+		mysql默认的字符编码方式是：utf8
+	
+	怎么查看mysql支持的那些存储引擎
+		show engines \G
+		     Engine: FEDERATED
+		     Support: NO
+		     Comment: Federated MySQL storage engine
+		Transactions: NULL
+			  XA: NULL
+		  Savepoints: NULL
+		*************************** 2. row ***************************
+		      Engine: MRG_MYISAM
+		     Support: YES
+		     Comment: Collection of identical MyISAM tables
+		Transactions: NO
+			  XA: NO
+		  Savepoints: NO
+		*************************** 3. row ***************************
+		      Engine: MyISAM
+		     Support: YES
+		     Comment: MyISAM storage engine
+		Transactions: NO
+			  XA: NO
+		  Savepoints: NO
+		*************************** 4. row ***************************
+		      Engine: BLACKHOLE
+		     Support: YES
+		     Comment: /dev/null storage engine (anything you write to it disappears)
+		Transactions: NO
+			  XA: NO
+		  Savepoints: NO
+		*************************** 5. row ***************************
+		      Engine: CSV
+		     Support: YES
+		     Comment: CSV storage engine
+		Transactions: NO
+			  XA: NO
+		  Savepoints: NO
+		*************************** 6. row ***************************
+		      Engine: MEMORY
+		     Support: YES
+		     Comment: Hash based, stored in memory, useful for temporary tables
+		Transactions: NO
+			  XA: NO
+		  Savepoints: NO
+		*************************** 7. row ***************************
+		      Engine: ARCHIVE
+		     Support: YES
+		     Comment: Archive storage engine
+		Transactions: NO
+			  XA: NO
+		  Savepoints: NO
+		*************************** 8. row ***************************
+		      Engine: InnoDB
+		     Support: DEFAULT
+		     Comment: Supports transactions, row-level locking, and foreign keys
+		Transactions: YES
+			  XA: YES
+		  Savepoints: YES
+		*************************** 9. row ***************************
+		      Engine: PERFORMANCE_SCHEMA
+		     Support: YES
+		     Comment: Performance Schema
+		Transactions: NO
+			  XA: NO
+		  Savepoints: NO
+	常见的存储引擎
+		MyISAM,
+		InnoDB,
+		MEMORY
 			
 
+事务
+	什么是事务
+		一个事务就是一个完整的业务逻辑
+		假设A账户向B账户中转账10000
+		将A账户的钱减去10000(update)
+		将B账户的钱加上10000(update)
+		必须同时成功
 
+	只有DML语句才会有事务这么一说，其他语句与事务无关
+		insert
+		delete
+		update
+		只有这三个才与事务有关系
+	事务的本质就是多条DML语句同时成功或者同时失败
+
+	事务是怎么做到多条DMl语句同时成功和同时失败的呢
+		提交事务
+			清空事务性货哦那个日志文件将数据全部彻底持久化到数据库表中；
+			提交事务标志着，事务的结束，并且是一种全部失败的结束
+		回滚事务
+			将之前的DML操作全部撤销，并且清空事务性活动的日志文件
+			回滚事务标志着，事物的结束，并且是一种全部失败的结束
+	怎么提交事务，怎么回滚事务
+		提交事务：commit;语句
+		回滚事务：roolback;语句
+		事务对应的英语单词是：transaction
+		
+		mysql默认情况下是支持自动提交事务的，每执行一条DML语句，则提交一次
+
+		怎么将mysql的自动提交机制关掉：先执行	start transaction;
 
 
 
